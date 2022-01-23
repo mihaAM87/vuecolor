@@ -3,35 +3,36 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     ruleArr: [{type: 'red', limit: 10}, {type: 'yellow', limit: 3}, {type: 'green', limit: 15}],
-    screenType: '',
-    counter: 0,
     rule: null,
-    sessionRule: JSON.parse(sessionStorage.getItem('sessionRule')) || {}
+    colorInterval: null,
+    sessionRule: JSON.parse(sessionStorage.getItem('sessionRule')) || {type: '', counter: 0}
   },
   mutations: {
-    redirect(state, {to, from}) {
+    redirect(state, to) {
       let toType = to.meta?.type;
-      let fromType = from.meta?.type;
+
+      state.sessionRule.counter = (!state.sessionRule || state.sessionRule.type !== toType) ? 0 : state.sessionRule.counter;
+      
       if (toType && toType != '') {
-        state.screenType = toType;       
+        state.sessionRule.type = toType;       
       } else {
-        state.screenType = state.ruleArr[0].type;
+        state.sessionRule.type = state.ruleArr[0].type;
       }      
-      state.counter = (!state?.sessionRule || state?.sessionRule?.type !== state.screenType) ? 0 : state?.sessionRule?.counter;
-      if ((!fromType || fromType == '') || (!state.screenType || state.screenType == '')) {
-        let colorInterval = setInterval(() => {
-          state.rule = state.ruleArr.find(item => item.type == state.screenType);     
-          if (state.rule?.limit <= state.counter) {
-            state.counter = 0;
+      
+      
+      if (!state.colorInterval) {
+        state.colorInterval = setInterval(() => {
+          state.rule = state.ruleArr.find(item => item.type == state.sessionRule?.type);     
+          if (state.rule?.limit <= state.sessionRule.counter) {
             let ruleIndex = state.ruleArr.indexOf(state.rule) + 1;
             ruleIndex = state.ruleArr.length <= ruleIndex ? 0 : ruleIndex;
-            state.sessionRule.type = state.ruleArr[ruleIndex].type;
-            state.sessionRule.counter = state.counter;
+            state.rule = state.ruleArr[ruleIndex];
+            state.sessionRule.type = state.rule.type;
+            state.sessionRule.counter = 0;
             sessionStorage.setItem('sessionRule', JSON.stringify(state.sessionRule));
             window.location.href = '/' + state.sessionRule.type;
           } else {
-            ++state.counter;
-            state.sessionRule.counter = state.counter;
+            ++state.sessionRule.counter;
             sessionStorage.setItem('sessionRule', JSON.stringify(state.sessionRule));
           }
           
@@ -46,8 +47,8 @@ export default createStore({
   },
   getters: {
     getCounter(state) {
-      let result = state.rule?.limit - state.counter;
-      return result >= 0 ? result : 0
+      let result = state.rule?.limit - state.sessionRule.counter;
+      return ((state.rule?.type == state.sessionRule.type) && (result >= 0)) ? result : 0
     }
   },
   modules: {
