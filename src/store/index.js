@@ -38,7 +38,8 @@ export default createStore({
   },
   getters: {
     getCounter(state) {
-      return state.roule?.limit - state.counter || state.roule?.limit;
+      let result = state.roule?.limit - state.counter;
+      return result >= 0 ? result : 0
     }
   },
   modules: {
