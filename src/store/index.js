@@ -11,13 +11,13 @@ export default createStore({
     redirect(state, to) {
       let toType = to.meta?.type;
 
-      state.sessionRule.counter = (!state.sessionRule || state.sessionRule.type !== toType) ? 0 : state.sessionRule.counter;
-      
       if (toType && toType != '') {
         state.sessionRule.type = toType;       
       } else {
         state.sessionRule.type = state.ruleArr[0].type;
-      }      
+      } 
+
+      state.sessionRule.counter = !state.sessionRule ? 0 : state.sessionRule.counter;      
       
       
       if (!state.colorInterval) {
@@ -48,7 +48,10 @@ export default createStore({
   getters: {
     getCounter(state) {
       let result = state.rule?.limit - state.sessionRule.counter;
-      return ((state.rule?.type == state.sessionRule.type) && (result >= 0)) ? result : 0
+      return result >= 0 ? result : state.rule?.limit
+    },
+    getType(state) {
+      return state.sessionRule.type;
     }
   },
   modules: {

@@ -1,6 +1,6 @@
 <template>
   <div :class="['screen', screenType]">
-    <strong :class="['screenCounter']">{{ getRule }}</strong>
+    <strong :class="['screenCounter']">{{ getCounter }}</strong>
    </div>
 </template>
 
@@ -9,9 +9,9 @@
     name: 'Screen',
     computed: {
       screenType() {
-        return ((this.$store.getters.getCounter < 3) && (this.$store.getters.getCounter % 2 === 0)) ? '' : this.$route.meta.type;
+        return ((this.getCounter < 3) && (this.getCounter % 2 === 0)) ? '' : this.$store.getters.getType;
       },
-      getRule() {
+      getCounter() {
         return this.$store.getters.getCounter;
       }
     }
