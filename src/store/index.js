@@ -11,14 +11,12 @@ export default createStore({
     redirect(state, to) {
       let toType = to.meta?.type;
 
-      if (toType && toType != '') {
-        state.sessionRule.type = toType;       
-      } else {
-        state.sessionRule.type = state.ruleArr[0].type;
-      } 
+      if (!toType || toType == '') {
+        toType = state.ruleArr[0].type;       
+      }
 
-      state.sessionRule.counter = !state.sessionRule ? 0 : state.sessionRule.counter;      
-      
+      state.sessionRule.counter = (!state.sessionRule || state.sessionRule.type !== toType) ? 0 : state.sessionRule.counter;
+      state.sessionRule.type = toType         
       
       if (!state.colorInterval) {
         state.colorInterval = setInterval(() => {
@@ -48,7 +46,7 @@ export default createStore({
   getters: {
     getCounter(state) {
       let result = state.rule?.limit - state.sessionRule.counter;
-      return result >= 0 ? result : state.rule?.limit
+      return result >= 0 ? result : state.rule?.limits
     },
     getType(state) {
       return state.sessionRule.type;
