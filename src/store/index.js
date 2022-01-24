@@ -8,7 +8,7 @@ export default createStore({
     sessionRule: JSON.parse(sessionStorage.getItem('sessionRule')) || {type: '', counter: 0}
   },
   mutations: {
-    redirect(state, to) {
+    redirect(state, {to, from}) {
       let toType = to.meta?.type;
 
       if (!toType || toType == '') {

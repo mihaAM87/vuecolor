@@ -17,7 +17,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 
-  store.dispatch('reload', to);
+  store.dispatch('reload', {to, from});
   next();
   
 });
