@@ -1,6 +1,6 @@
 <template>
   <div :class="['screen', screenType]">
-    <strong :class="['screenCounter']">{{ getCounter }}</strong>
+    <p><strong :class="['screenCounter']">{{ getCounter }}</strong></p>
    </div>
 </template>
 
@@ -24,6 +24,7 @@
     width: 100px;
     height: 100px;
     border: 2px solid black;
+    box-align: center;
   }
 
   .red {
